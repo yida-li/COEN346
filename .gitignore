@@ -1,0 +1,25 @@
+# git will not track anything under folder/node directory
+Folder/
+node_modules/
+bin/
+
+
+# IDE generated builds
+
+.class
+.classpath
+.project
+.settings
+.idea
+.metadata
+
+
+# just in case
+*.iml
+*.ipr
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
