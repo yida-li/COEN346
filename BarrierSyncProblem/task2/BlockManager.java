@@ -1,10 +1,10 @@
 
 // Import (aka include) some stuff.
 
-package task1;
+package task2;
 
-import task1.common.BaseThread;
-import task1.common.Semaphore;
+import task2.common.BaseThread;
+import task2.common.Semaphore;
 
 /**
  * Class BlockManager Implements character block "manager" and does twists with

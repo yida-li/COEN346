@@ -1,4 +1,4 @@
-package task1.common;
+package task2.common;
 
 /**
  * Class Semaphore Implements artificial semaphore built on top of Java's sync
