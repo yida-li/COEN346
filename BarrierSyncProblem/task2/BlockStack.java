@@ -27,12 +27,12 @@ class BlockStack {
 	/**
 	 * Current size of the stack
 	 */
-	public int iSize = DEFAULT_SIZE;
+	private int iSize = DEFAULT_SIZE;
 
 	/**
 	 * Current top of the stack
 	 */
-	public int iTop = 3;
+	private int iTop = 3;
 
 	/**
 	 * stack[0:5] with four defined values
@@ -48,7 +48,7 @@ class BlockStack {
 	/**
 	 * Stack access counter
 	 */
-	public int counter = 0;
+	private int counter = 0;
 
 	/**
 	 * Supplied size
@@ -94,9 +94,16 @@ class BlockStack {
 	 * Standard push operation
 	 */
 	public void push(final char pcBlock) {
+
+		if (isEmpty()) {
+
+			this.acStack[++this.iTop] = 'a';
+		} else {
+
+			this.acStack[++this.iTop] = pcBlock;
+		}
 		counter++;
 		System.out.println("Successful push!");
-		this.acStack[++this.iTop] = pcBlock;
 	}
 
 	/**
