@@ -1,4 +1,4 @@
-package task1.common;
+package task3.common;
 
 import java.util.Random;
 

@@ -1,10 +1,10 @@
 
 // Import (aka include) some stuff.
 
-package task1;
+package task3;
 
-import task1.common.BaseThread;
-import task1.common.Semaphore;
+import task3.common.BaseThread;
+import task3.common.Semaphore;
 
 /**
  * Class BlockManager Implements character block "manager" and does twists with
@@ -35,7 +35,9 @@ public class BlockManager {
 	/**
 	 * For atomicity
 	 */
-	// private static Semaphore mutex = new Semaphore(...);
+	//
+
+	private static Semaphore mutex = new Semaphore(1);
 
 	/*
 	 * For synchronization
@@ -213,6 +215,7 @@ public class BlockManager {
 	 */
 	static class CharStackProber extends BaseThread {
 		public void run() {
+			mutex.P();
 			phase1();
 
 			try {
@@ -232,7 +235,7 @@ public class BlockManager {
 				reportException(e);
 				System.exit(1);
 			}
-
+			mutex.V();
 			phase2();
 
 		}

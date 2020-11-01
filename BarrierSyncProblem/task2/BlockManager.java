@@ -1,10 +1,10 @@
 
 // Import (aka include) some stuff.
 
-package task2;
+package task3;
 
-import task2.common.BaseThread;
-import task2.common.Semaphore;
+import task3.common.BaseThread;
+import task3.common.Semaphore;
 
 /**
  * Class BlockManager Implements character block "manager" and does twists with
@@ -131,7 +131,22 @@ public class BlockManager {
 		} finally {
 			System.exit(1);
 		}
-	} // main()
+	}
+	// my own exception handling
+
+	public class BoundaryException extends Exception {
+
+		/**
+		 *
+		 */
+		private static final long serialVersionUID = 1L;
+
+		public BoundaryException(String message) {
+			super(message);
+		}
+	}
+
+	// main()
 
 	/**
 	 * Inner AcquireBlock thread class.
@@ -249,6 +264,7 @@ public class BlockManager {
 		System.err.println("Stack Trace      : ");
 		poException.printStackTrace(System.err);
 	}
+
 } // class BlockManager
 
 // EOF

@@ -8,10 +8,10 @@
  * 
  */
 
-package task1;
+package task3;
 
-import task1.common.BaseThread;
-import task1.common.Semaphore;
+import task3.common.BaseThread;
+import task3.common.Semaphore;
 
 class BlockStack {
 	/**
@@ -27,12 +27,12 @@ class BlockStack {
 	/**
 	 * Current size of the stack
 	 */
-	public int iSize = DEFAULT_SIZE;
+	private int iSize = DEFAULT_SIZE;
 
 	/**
 	 * Current top of the stack
 	 */
-	public int iTop = 3;
+	private int iTop = 3;
 
 	/**
 	 * stack[0:5] with four defined values
@@ -48,7 +48,7 @@ class BlockStack {
 	/**
 	 * Stack access counter
 	 */
-	public int counter = 0;
+	private int counter = 0;
 
 	/**
 	 * Supplied size
@@ -76,6 +76,7 @@ class BlockStack {
 	 * @return top element of the stack, char
 	 */
 	public char pick() {
+		counter++;
 		return this.acStack[this.iTop];
 	}
 
@@ -93,8 +94,16 @@ class BlockStack {
 	 * Standard push operation
 	 */
 	public void push(final char pcBlock) {
+
+		if (isEmpty()) { //when the stack is empty
+
+			this.acStack[++this.iTop] = 'a'; //Calling push() on empty stack should place an ‘a’ on top
+		} else {
+
+			this.acStack[++this.iTop] = pcBlock;
+		}
 		counter++;
-		this.acStack[++this.iTop] = pcBlock;
+		System.out.println("Successful push!");
 	}
 
 	/**
@@ -104,8 +113,9 @@ class BlockStack {
 	 */
 	public char pop() {
 		counter++;
+		System.out.println("Successful pop!");
 		char cBlock = this.acStack[this.iTop];
-		this.acStack[this.iTop--] = '$'; // Leave prev. value undefined
+		this.acStack[this.iTop--] = '*'; // Print ‘*’ instead of ‘$’ for each empty position in the stack
 		return cBlock;
 	}
 
@@ -115,7 +125,7 @@ class BlockStack {
 	 * @return true if stack is empty
 	 */
 	public boolean isEmpty() {
-		counter++;
+
 		return (this.iTop == -1);
 	}
 

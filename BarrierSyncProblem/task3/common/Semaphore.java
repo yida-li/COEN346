@@ -1,4 +1,4 @@
-package task1.common;
+package task3.common;
 
 /**
  * Class Semaphore Implements artificial semaphore built on top of Java's sync
@@ -35,7 +35,7 @@ public class Semaphore {
 	}
 
 	/**
-	 * Default. Equivalent to Semaphore(0)
+	 * Default. Equivalent to Semaphore(0)        
 	 */
 	public Semaphore() {
 		this(0);

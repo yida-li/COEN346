@@ -95,9 +95,9 @@ class BlockStack {
 	 */
 	public void push(final char pcBlock) {
 
-		if (isEmpty()) {
+		if (isEmpty()) { // when the stack is empty
 
-			this.acStack[++this.iTop] = 'a';
+			this.acStack[++this.iTop] = 'a'; // Calling push() on empty stack should place an ‘a’ on top
 		} else {
 
 			this.acStack[++this.iTop] = pcBlock;
@@ -130,9 +130,9 @@ class BlockStack {
 	}
 
 	/**
-	 * getter method to fectch variable iSize
+	 * getter method to fectch private variable iSize
 	 * 
-	 * @return true if stack is empty
+	 * @return Current size of the stack
 	 */
 	public int getISize() {
 
@@ -140,9 +140,9 @@ class BlockStack {
 	}
 
 	/**
-	 * getter method to fectch variable iTop
+	 * getter method to fectch private variable iTop
 	 * 
-	 * @return true if stack is empty
+	 * @return Current top of the stack
 	 */
 	public int getITop() {
 
@@ -150,9 +150,9 @@ class BlockStack {
 	}
 
 	/**
-	 * getter method to fectch the stack access counter
+	 * getter method to fectch private stack access counter
 	 * 
-	 * @return true if stack is empty
+	 * @return the stack access counter
 	 */
 	public int getAccessCounter() {
 
