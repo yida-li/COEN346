@@ -7,6 +7,12 @@
  *         code by Prof. D. Probst
  * 
  */
+
+package task1;
+
+import task1.common.BaseThread;
+import task1.common.Semaphore;
+
 class BlockStack {
 	/**
 	 * # of letters in the English alphabet + 2
@@ -38,6 +44,11 @@ class BlockStack {
 	 */
 	public BlockStack() {
 	}
+
+	/**
+	 * Stack access counter
+	 */
+	public int counter = 0;
 
 	/**
 	 * Supplied size
@@ -74,6 +85,7 @@ class BlockStack {
 	 * @return the element, char
 	 */
 	public char getAt(final int piPosition) {
+		counter++;
 		return this.acStack[piPosition];
 	}
 
@@ -81,6 +93,7 @@ class BlockStack {
 	 * Standard push operation
 	 */
 	public void push(final char pcBlock) {
+		counter++;
 		this.acStack[++this.iTop] = pcBlock;
 	}
 
@@ -90,6 +103,7 @@ class BlockStack {
 	 * @return ex-top element of the stack, char
 	 */
 	public char pop() {
+		counter++;
 		char cBlock = this.acStack[this.iTop];
 		this.acStack[this.iTop--] = '$'; // Leave prev. value undefined
 		return cBlock;
@@ -101,7 +115,38 @@ class BlockStack {
 	 * @return true if stack is empty
 	 */
 	public boolean isEmpty() {
+		counter++;
 		return (this.iTop == -1);
+	}
+
+	/**
+	 * getter method to fectch variable iSize
+	 * 
+	 * @return true if stack is empty
+	 */
+	public int getISize() {
+
+		return iSize;
+	}
+
+	/**
+	 * getter method to fectch variable iTop
+	 * 
+	 * @return true if stack is empty
+	 */
+	public int getITop() {
+
+		return iTop;
+	}
+
+	/**
+	 * getter method to fectch the stack access counter
+	 * 
+	 * @return true if stack is empty
+	 */
+	public int getAccessCounter() {
+
+		return counter;
 	}
 
 }

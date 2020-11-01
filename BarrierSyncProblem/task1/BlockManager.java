@@ -1,19 +1,22 @@
+
 // Import (aka include) some stuff.
-import common.*;
+
+package task1;
+
+import task1.common.BaseThread;
+import task1.common.Semaphore;
 
 /**
- * Class BlockManager
- * Implements character block "manager" and does twists with threads.
+ * Class BlockManager Implements character block "manager" and does twists with
+ * threads.
  *
- * @author Serguei A. Mokhov, mokhov@cs.concordia.ca;
- * Inspired by previous code by Prof. D. Probst
+ * @author Serguei A. Mokhov, mokhov@cs.concordia.ca; Inspired by previous code
+ *         by Prof. D. Probst
  *
- * $Revision: 1.5 $
- * $Last Revision Date: 2019/07/02 $
-
+ *         $Revision: 1.5 $ $Last Revision Date: 2019/07/02 $
+ * 
  */
-public class BlockManager
-{
+public class BlockManager {
 	/**
 	 * The stack itself
 	 */
@@ -32,7 +35,7 @@ public class BlockManager
 	/**
 	 * For atomicity
 	 */
-	//private static Semaphore mutex = new Semaphore(...);
+	// private static Semaphore mutex = new Semaphore(...);
 
 	/*
 	 * For synchronization
@@ -41,20 +44,17 @@ public class BlockManager
 	/**
 	 * s1 is to make sure phase I for all is done before any phase II begins
 	 */
-	//private static Semaphore s1 = new Semaphore(...);
+	// private static Semaphore s1 = new Semaphore(...);
 
 	/**
-	 * s2 is for use in conjunction with Thread.turnTestAndSet() for phase II proceed
-	 * in the thread creation order
+	 * s2 is for use in conjunction with Thread.turnTestAndSet() for phase II
+	 * proceed in the thread creation order
 	 */
-	//private static Semaphore s2 = new Semaphore(...);
-
+	// private static Semaphore s2 = new Semaphore(...);
 
 	// The main()
-	public static void main(String[] argv)
-	{
-		try
-		{
+	public static void main(String[] argv) {
+		try {
 			// Some initial stats...
 			System.out.println("Main thread starts executing.");
 			System.out.println("Initial value of top = " + soStack.getITop() + ".");
@@ -77,10 +77,10 @@ public class BlockManager
 			System.out.println("main(): Three ReleaseBlock threads have been created.");
 
 			// Create an array object first
-			CharStackProber	aStackProbers[] = new CharStackProber[NUM_PROBERS];
+			CharStackProber aStackProbers[] = new CharStackProber[NUM_PROBERS];
 
 			// Then the CharStackProber objects
-			for(int i = 0; i < NUM_PROBERS; i++)
+			for (int i = 0; i < NUM_PROBERS; i++)
 				aStackProbers[i] = new CharStackProber();
 
 			System.out.println("main(): CharStackProber threads have been created: " + NUM_PROBERS);
@@ -112,7 +112,7 @@ public class BlockManager
 			rb2.join();
 			rb3.join();
 
-			for(int i = 0; i < NUM_PROBERS; i++)
+			for (int i = 0; i < NUM_PROBERS; i++)
 				aStackProbers[i].join();
 
 			// Some final stats after all the child threads terminated...
@@ -123,189 +123,127 @@ public class BlockManager
 			System.out.println("Stack access count = " + soStack.getAccessCounter());
 
 			System.exit(0);
-		}
-		catch(InterruptedException e)
-		{
+		} catch (InterruptedException e) {
 			System.err.println("Caught InterruptedException (internal error): " + e.getMessage());
 			e.printStackTrace(System.err);
-		}
-		catch(Exception e)
-		{
+		} catch (Exception e) {
 			reportException(e);
-		}
-		finally
-		{
+		} finally {
 			System.exit(1);
 		}
 	} // main()
 
-
 	/**
 	 * Inner AcquireBlock thread class.
 	 */
-	static class AcquireBlock extends BaseThread
-	{
+	static class AcquireBlock extends BaseThread {
 		/**
 		 * A copy of a block returned by pop().
-                 * @see BlocStack#pop()
+		 * 
+		 * @see BlocStack#pop()
 		 */
 		private char cCopy;
 
-		public void run()
-		{
+		public void run() {
 			System.out.println("AcquireBlock thread [TID=" + this.iTID + "] starts executing.");
-
 
 			phase1();
 
-
-			try
-			{
+			try {
 				System.out.println("AcquireBlock thread [TID=" + this.iTID + "] requests Ms block.");
 
 				this.cCopy = soStack.pop();
 
-				System.out.println
-				(
-					"AcquireBlock thread [TID=" + this.iTID + "] has obtained Ms block " + this.cCopy +
-					" from position " + (soStack.getITop() + 1) + "."
-				);
+				System.out.println("AcquireBlock thread [TID=" + this.iTID + "] has obtained Ms block " + this.cCopy
+						+ " from position " + (soStack.getITop() + 1) + ".");
 
+				System.out.println("Acq[TID=" + this.iTID + "]: Current value of top = " + soStack.getITop() + ".");
 
-				System.out.println
-				(
-					"Acq[TID=" + this.iTID + "]: Current value of top = " +
-					soStack.getITop() + "."
-				);
-
-				System.out.println
-				(
-					"Acq[TID=" + this.iTID + "]: Current value of stack top = " +
-					soStack.pick() + "."
-				);
-			}
-			catch(Exception e)
-			{
+				System.out.println("Acq[TID=" + this.iTID + "]: Current value of stack top = " + soStack.pick() + ".");
+			} catch (Exception e) {
 				reportException(e);
 				System.exit(1);
 			}
 
 			phase2();
-
 
 			System.out.println("AcquireBlock thread [TID=" + this.iTID + "] terminates.");
 		}
 	} // class AcquireBlock
 
-
 	/**
 	 * Inner class ReleaseBlock.
 	 */
-	static class ReleaseBlock extends BaseThread
-	{
+	static class ReleaseBlock extends BaseThread {
 		/**
 		 * Block to be returned. Default is 'a' if the stack is empty.
 		 */
 		private char cBlock = 'a';
 
-		public void run()
-		{
+		public void run() {
 			System.out.println("ReleaseBlock thread [TID=" + this.iTID + "] starts executing.");
-
 
 			phase1();
 
+			try {
+				if (soStack.isEmpty() == false)
+					this.cBlock = (char) (soStack.pick() + 1);
 
-			try
-			{
-				if(soStack.isEmpty() == false)
-					this.cBlock = (char)(soStack.pick() + 1);
-
-
-				System.out.println
-				(
-					"ReleaseBlock thread [TID=" + this.iTID + "] returns Ms block " + this.cBlock +
-					" to position " + (soStack.getITop() + 1) + "."
-				);
+				System.out.println("ReleaseBlock thread [TID=" + this.iTID + "] returns Ms block " + this.cBlock
+						+ " to position " + (soStack.getITop() + 1) + ".");
 
 				soStack.push(this.cBlock);
 
-				System.out.println
-				(
-					"Rel[TID=" + this.iTID + "]: Current value of top = " +
-					soStack.getITop() + "."
-				);
+				System.out.println("Rel[TID=" + this.iTID + "]: Current value of top = " + soStack.getITop() + ".");
 
-				System.out.println
-				(
-					"Rel[TID=" + this.iTID + "]: Current value of stack top = " +
-					soStack.pick() + "."
-				);
-			}
-			catch(Exception e)
-			{
+				System.out.println("Rel[TID=" + this.iTID + "]: Current value of stack top = " + soStack.pick() + ".");
+			} catch (Exception e) {
 				reportException(e);
 				System.exit(1);
 			}
 
-
 			phase2();
-
 
 			System.out.println("ReleaseBlock thread [TID=" + this.iTID + "] terminates.");
 		}
 	} // class ReleaseBlock
 
-
 	/**
 	 * Inner class CharStackProber to dump stack contents.
 	 */
-	static class CharStackProber extends BaseThread
-	{
-		public void run()
-		{
+	static class CharStackProber extends BaseThread {
+		public void run() {
 			phase1();
 
-
-			try
-			{
-				for(int i = 0; i < siThreadSteps; i++)
-				{
+			try {
+				for (int i = 0; i < siThreadSteps; i++) {
 					System.out.print("Stack Prober [TID=" + this.iTID + "]: Stack state: ");
 
 					// [s] - means ordinay slot of a stack
 					// (s) - current top of the stack
-					for(int s = 0; s < soStack.getISize(); s++)
-						System.out.print
-						(
-							(s == BlockManager.soStack.getITop() ? "(" : "[") +
-							BlockManager.soStack.getAt(s) +
-							(s == BlockManager.soStack.getITop() ? ")" : "]")
-						);
+					for (int s = 0; s < soStack.getISize(); s++)
+						System.out.print((s == BlockManager.soStack.getITop() ? "(" : "[")
+								+ BlockManager.soStack.getAt(s) + (s == BlockManager.soStack.getITop() ? ")" : "]"));
 
 					System.out.println(".");
 
 				}
-			}
-			catch(Exception e)
-			{
+			} catch (Exception e) {
 				reportException(e);
 				System.exit(1);
 			}
-
 
 			phase2();
 
 		}
 	} // class CharStackProber
 
-
 	/**
 	 * Outputs exception information to STDERR
+	 * 
 	 * @param poException Exception object to dump to STDERR
 	 */
-	private static void reportException(Exception poException)
-	{
+	private static void reportException(Exception poException) {
 		System.err.println("Caught exception : " + poException.getClass().getName());
 		System.err.println("Message          : " + poException.getMessage());
 		System.err.println("Stack Trace      : ");
