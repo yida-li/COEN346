@@ -146,6 +146,23 @@ public class BlockManager {
 		}
 	}
 
+	static void boundCheck(BlockStack blockOjbect)throws BoundaryException{  
+		if(blockOjbect.isEmpty())  
+		{
+			throw new BoundaryException("stack empty!"); 
+
+		}
+		  
+		
+		else if(blockOjbect.acStack.length()==blockOjbect.getMaxsize())
+		{
+			throw new BoundaryException("stack is full!"); 
+		}
+		 else {
+			  system.out.println('stack is fine');
+		 } 
+		
+	  }
 	// main()
 
 	/**

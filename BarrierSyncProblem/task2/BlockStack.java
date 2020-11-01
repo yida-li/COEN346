@@ -159,6 +159,16 @@ class BlockStack {
 		return counter;
 	}
 
+	/**
+	 * getter method to fetch max size
+	 * 
+	 * @return max stack size
+	 */
+	public int getMaxsize() {
+
+		return MAX_SIZE;
+	}
+
 }
 
 // EOF
