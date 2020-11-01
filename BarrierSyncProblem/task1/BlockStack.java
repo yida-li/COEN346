@@ -76,6 +76,7 @@ class BlockStack {
 	 * @return top element of the stack, char
 	 */
 	public char pick() {
+		counter++;
 		return this.acStack[this.iTop];
 	}
 
@@ -94,6 +95,7 @@ class BlockStack {
 	 */
 	public void push(final char pcBlock) {
 		counter++;
+		System.out.println("Successful push!");
 		this.acStack[++this.iTop] = pcBlock;
 	}
 
@@ -104,8 +106,9 @@ class BlockStack {
 	 */
 	public char pop() {
 		counter++;
+		System.out.println("Successful pop!");
 		char cBlock = this.acStack[this.iTop];
-		this.acStack[this.iTop--] = '$'; // Leave prev. value undefined
+		this.acStack[this.iTop--] = '*'; // Print ‘*’ instead of ‘$’ for each empty position in the stack
 		return cBlock;
 	}
 
@@ -115,7 +118,7 @@ class BlockStack {
 	 * @return true if stack is empty
 	 */
 	public boolean isEmpty() {
-		counter++;
+
 		return (this.iTop == -1);
 	}
 
