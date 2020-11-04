@@ -165,7 +165,7 @@ public class BlockManager {
 				reportException(e);
 				System.exit(1);
 			}
-			System.out.println("------------------------------------------------------------Counter " + counter);
+
 			if (counter == 10) {
 				System.out.println(
 						"------------------------------------------------------------Counter is 10 , all threads finished phase 1 ");
@@ -173,8 +173,9 @@ public class BlockManager {
 
 			mutex.V();
 
+			mutex.P();
 			phase2();
-
+			mutex.V();
 			System.out.println("AcquireBlock thread [TID=" + this.iTID + "] terminates.");
 		}
 	} // class AcquireBlock
@@ -215,10 +216,6 @@ public class BlockManager {
 				reportException(e);
 				System.exit(1);
 			}
-			if (counter == 10) {
-				System.out.println("All Threads finished");
-			}
-			System.out.println("------------------------------------------------------------Counter " + counter);
 
 			mutex.V();
 
@@ -226,7 +223,9 @@ public class BlockManager {
 				System.out.println(
 						"------------------------------------------------------------Counter is 10 , all threads finished phase 1 ");
 			}
+			mutex.P();
 			phase2();
+			mutex.V();
 
 			System.out.println("ReleaseBlock thread [TID=" + this.iTID + "] terminates.");
 		}
@@ -263,18 +262,14 @@ public class BlockManager {
 				System.exit(1);
 			}
 
-			if (counter == 10) {
-				System.out.println("All Threads finished");
-			}
-			System.out.println("------------------------------------------------------------Counter " + counter);
+			mutex.V();
 			if (counter == 10) {
 				System.out.println(
 						"------------------------------------------------------------Counter is 10 , all threads finished phase 1 ");
 			}
-
-			mutex.V();
-
+			mutex.P();
 			phase2();
+			mutex.V();
 
 		}
 	} // class CharStackProber

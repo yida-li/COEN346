@@ -39,6 +39,20 @@ class BlockStack {
 	public char acStack[] = new char[] { 'a', 'b', 'c', 'd', '$', '$' };
 
 	/**
+	 * private stack[0:5] with four defined values
+	 * 
+	 * private char acStack[] = new char[] { 'a', 'b', 'c', 'd', '$', '$' };
+	 * 
+	 * 
+	 * 
+	 * public char getStack(){
+	 * 
+	 * return acStack;
+	 * 
+	 * }
+	 */
+
+	/**
 	 * Default constructor
 	 */
 	public BlockStack() {
