@@ -1,10 +1,6 @@
 
 // Import (aka include) some stuff.
-
-package task1;
-
-import task1.common.BaseThread;
-import task1.common.Semaphore;
+import common.*;
 
 /**
  * Class BlockManager Implements character block "manager" and does twists with
@@ -27,6 +23,8 @@ public class BlockManager {
 	 */
 	private static final int NUM_PROBERS = 4;
 
+	public static int counter = 0;
+
 	/**
 	 * Number of steps they take
 	 */
@@ -35,8 +33,13 @@ public class BlockManager {
 	/**
 	 * For atomicity
 	 */
-	// private static Semaphore mutex = new Semaphore(...);
-
+	//
+	private static Semaphore mutex = new Semaphore(1);
+	/**
+	 * For atomicity of phase 2
+	 */
+	//
+	private static Semaphore mutexPhase2 = new Semaphore(1);
 	/*
 	 * For synchronization
 	 */
@@ -44,13 +47,17 @@ public class BlockManager {
 	/**
 	 * s1 is to make sure phase I for all is done before any phase II begins
 	 */
-	// private static Semaphore s1 = new Semaphore(...);
+	//
+	//
+	private static Semaphore s1 = new Semaphore(-9);
 
 	/**
 	 * s2 is for use in conjunction with Thread.turnTestAndSet() for phase II
 	 * proceed in the thread creation order
 	 */
-	// private static Semaphore s2 = new Semaphore(...);
+	//
+	//
+	private static Semaphore s2 = new Semaphore(0);
 
 	// The main()
 	public static void main(String[] argv) {
@@ -145,8 +152,12 @@ public class BlockManager {
 		private char cCopy;
 
 		public void run() {
+			while (mutex.isLocked()) {
+				//
+			}
+			mutex.P();
+			counter++;
 			System.out.println("AcquireBlock thread [TID=" + this.iTID + "] starts executing.");
-
 			phase1();
 
 			try {
@@ -164,10 +175,32 @@ public class BlockManager {
 				reportException(e);
 				System.exit(1);
 			}
+			System.out.println("------------------------------------------------------------Counter " + counter);
+			if (counter == 10) {
+				System.out.println(
+						"------------------------------------------------------------Counter is 10 , all threads finished phase 1 ");
+			}
 
-			phase2();
+			s1.V();
+			mutex.V();
+			s1.P();
+			s1.V();
+			while (true) {
 
-			System.out.println("AcquireBlock thread [TID=" + this.iTID + "] terminates.");
+				if (turnTestAndSet()) {
+					mutexPhase2.P();
+					phase2();
+					mutexPhase2.V();
+					break;
+				}
+				try {
+					sleep(200);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
 		}
 	} // class AcquireBlock
 
@@ -181,6 +214,12 @@ public class BlockManager {
 		private char cBlock = 'a';
 
 		public void run() {
+
+			while (mutex.isLocked()) {
+				//
+			}
+			mutex.P();
+			counter++;
 			System.out.println("ReleaseBlock thread [TID=" + this.iTID + "] starts executing.");
 
 			phase1();
@@ -201,10 +240,35 @@ public class BlockManager {
 				reportException(e);
 				System.exit(1);
 			}
+			if (counter == 10) {
+				System.out.println("All Threads finished");
+			}
+			System.out.println("------------------------------------------------------------Counter " + counter);
+			s1.V();
+			mutex.V();
 
-			phase2();
+			if (counter == 10) {
+				System.out.println(
+						"------------------------------------------------------------Counter is 10 , all threads finished phase 1 ");
+			}
+			s1.P();
+			s1.V();
 
-			System.out.println("ReleaseBlock thread [TID=" + this.iTID + "] terminates.");
+			while (true) {
+
+				if (turnTestAndSet()) {
+					mutexPhase2.P();
+					phase2();
+					mutexPhase2.V();
+					break;
+				}
+				try {
+					sleep(200);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
 	} // class ReleaseBlock
 
@@ -213,6 +277,12 @@ public class BlockManager {
 	 */
 	static class CharStackProber extends BaseThread {
 		public void run() {
+			while (mutex.isLocked()) {
+				//
+			}
+			mutex.P();
+			counter++;
+
 			phase1();
 
 			try {
@@ -233,7 +303,34 @@ public class BlockManager {
 				System.exit(1);
 			}
 
-			phase2();
+			if (counter == 10) {
+				System.out.println("All Threads finished");
+			}
+			System.out.println("------------------------------------------------------------Counter " + counter);
+			if (counter == 10) {
+				System.out.println(
+						"------------------------------------------------------------Counter is 10 , all threads finished phase 1 ");
+			}
+			s1.V();
+			mutex.V();
+			s1.P();
+			s1.V();
+			while (true) {
+
+				if (turnTestAndSet()) {
+					mutexPhase2.P();
+					phase2();
+					mutexPhase2.V();
+					break;
+				}
+				System.out.println("invalid entry");
+				try {
+					sleep(200);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 
 		}
 	} // class CharStackProber

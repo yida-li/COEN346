@@ -1,10 +1,6 @@
 
 // Import (aka include) some stuff.
-
-package task1;
-
-import task1.common.BaseThread;
-import task1.common.Semaphore;
+import common.*;
 
 /**
  * Class BlockManager Implements character block "manager" and does twists with
@@ -27,6 +23,8 @@ public class BlockManager {
 	 */
 	private static final int NUM_PROBERS = 4;
 
+	public static int counter = 0;
+
 	/**
 	 * Number of steps they take
 	 */
@@ -35,7 +33,8 @@ public class BlockManager {
 	/**
 	 * For atomicity
 	 */
-	// private static Semaphore mutex = new Semaphore(...);
+	//
+	private static Semaphore mutex = new Semaphore(1);
 
 	/*
 	 * For synchronization
@@ -44,13 +43,15 @@ public class BlockManager {
 	/**
 	 * s1 is to make sure phase I for all is done before any phase II begins
 	 */
-	// private static Semaphore s1 = new Semaphore(...);
+	//
+	// private static Semaphore s1 = new Semaphore(-13);
 
 	/**
 	 * s2 is for use in conjunction with Thread.turnTestAndSet() for phase II
 	 * proceed in the thread creation order
 	 */
-	// private static Semaphore s2 = new Semaphore(...);
+	//
+	// private static Semaphore s2 = new Semaphore(0);
 
 	// The main()
 	public static void main(String[] argv) {
@@ -68,13 +69,9 @@ public class BlockManager {
 			AcquireBlock ab2 = new AcquireBlock();
 			AcquireBlock ab3 = new AcquireBlock();
 
-			System.out.println("main(): Three AcquireBlock threads have been created.");
-
 			ReleaseBlock rb1 = new ReleaseBlock();
 			ReleaseBlock rb2 = new ReleaseBlock();
 			ReleaseBlock rb3 = new ReleaseBlock();
-
-			System.out.println("main(): Three ReleaseBlock threads have been created.");
 
 			// Create an array object first
 			CharStackProber aStackProbers[] = new CharStackProber[NUM_PROBERS];
@@ -99,7 +96,7 @@ public class BlockManager {
 			aStackProbers[3].start();
 			rb3.start();
 
-			System.out.println("main(): All the threads are ready.");
+			System.out.println("main(): All the threads are ready.\n\n\n");
 
 			/*
 			 * Wait by here for all forked threads to die
@@ -107,7 +104,6 @@ public class BlockManager {
 			ab1.join();
 			ab2.join();
 			ab3.join();
-
 			rb1.join();
 			rb2.join();
 			rb3.join();
@@ -145,8 +141,13 @@ public class BlockManager {
 		private char cCopy;
 
 		public void run() {
-			System.out.println("AcquireBlock thread [TID=" + this.iTID + "] starts executing.");
+			while (mutex.isLocked()) {
+				//
+			}
+			mutex.P();
 
+			counter++;
+			System.out.println("\n\nAcquireBlock thread [TID=" + this.iTID + "] starts executing.");
 			phase1();
 
 			try {
@@ -164,6 +165,13 @@ public class BlockManager {
 				reportException(e);
 				System.exit(1);
 			}
+			System.out.println("------------------------------------------------------------Counter " + counter);
+			if (counter == 10) {
+				System.out.println(
+						"------------------------------------------------------------Counter is 10 , all threads finished phase 1 ");
+			}
+
+			mutex.V();
 
 			phase2();
 
@@ -181,7 +189,13 @@ public class BlockManager {
 		private char cBlock = 'a';
 
 		public void run() {
-			System.out.println("ReleaseBlock thread [TID=" + this.iTID + "] starts executing.");
+
+			while (mutex.isLocked()) {
+				//
+			}
+			mutex.P();
+			counter++;
+			System.out.println("\n\nReleaseBlock thread [TID=" + this.iTID + "] starts executing.");
 
 			phase1();
 
@@ -201,7 +215,17 @@ public class BlockManager {
 				reportException(e);
 				System.exit(1);
 			}
+			if (counter == 10) {
+				System.out.println("All Threads finished");
+			}
+			System.out.println("------------------------------------------------------------Counter " + counter);
 
+			mutex.V();
+
+			if (counter == 10) {
+				System.out.println(
+						"------------------------------------------------------------Counter is 10 , all threads finished phase 1 ");
+			}
 			phase2();
 
 			System.out.println("ReleaseBlock thread [TID=" + this.iTID + "] terminates.");
@@ -213,6 +237,12 @@ public class BlockManager {
 	 */
 	static class CharStackProber extends BaseThread {
 		public void run() {
+			while (mutex.isLocked()) {
+				//
+			}
+			mutex.P();
+			counter++;
+			System.out.print("\n\n");
 			phase1();
 
 			try {
@@ -232,6 +262,17 @@ public class BlockManager {
 				reportException(e);
 				System.exit(1);
 			}
+
+			if (counter == 10) {
+				System.out.println("All Threads finished");
+			}
+			System.out.println("------------------------------------------------------------Counter " + counter);
+			if (counter == 10) {
+				System.out.println(
+						"------------------------------------------------------------Counter is 10 , all threads finished phase 1 ");
+			}
+
+			mutex.V();
 
 			phase2();
 

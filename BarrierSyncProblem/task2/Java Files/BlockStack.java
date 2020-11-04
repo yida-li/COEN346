@@ -7,12 +7,6 @@
  *         code by Prof. D. Probst
  * 
  */
-
-package task1;
-
-import task1.common.BaseThread;
-import task1.common.Semaphore;
-
 class BlockStack {
 	/**
 	 * # of letters in the English alphabet + 2
@@ -27,12 +21,17 @@ class BlockStack {
 	/**
 	 * Current size of the stack
 	 */
-	public int iSize = DEFAULT_SIZE;
+	private int iSize = DEFAULT_SIZE;
 
 	/**
 	 * Current top of the stack
 	 */
-	public int iTop = 3;
+	private int iTop = 3;
+
+	/**
+	 * Current stack access counter
+	 */
+	private int stackCounter = 0;
 
 	/**
 	 * stack[0:5] with four defined values
@@ -44,11 +43,6 @@ class BlockStack {
 	 */
 	public BlockStack() {
 	}
-
-	/**
-	 * Stack access counter
-	 */
-	public int counter = 0;
 
 	/**
 	 * Supplied size
@@ -76,7 +70,7 @@ class BlockStack {
 	 * @return top element of the stack, char
 	 */
 	public char pick() {
-		counter++;
+		stackCounter++;
 		return this.acStack[this.iTop];
 	}
 
@@ -86,7 +80,7 @@ class BlockStack {
 	 * @return the element, char
 	 */
 	public char getAt(final int piPosition) {
-		counter++;
+		stackCounter++;
 		return this.acStack[piPosition];
 	}
 
@@ -94,9 +88,15 @@ class BlockStack {
 	 * Standard push operation
 	 */
 	public void push(final char pcBlock) {
-		counter++;
-		System.out.println("Successful push!");
-		this.acStack[++this.iTop] = pcBlock;
+		stackCounter++;
+		if (isEmpty()) {
+			System.out.println("Stack is empty, putting a on top");
+			this.acStack[++this.iTop] = 'a';
+		} else {
+			System.out.println("Sucessful push");
+			this.acStack[++this.iTop] = pcBlock;
+		}
+
 	}
 
 	/**
@@ -105,51 +105,50 @@ class BlockStack {
 	 * @return ex-top element of the stack, char
 	 */
 	public char pop() {
-		counter++;
-		System.out.println("Successful pop!");
+		stackCounter++;
+		System.out.println("Sucessful pop");
 		char cBlock = this.acStack[this.iTop];
-		this.acStack[this.iTop--] = '*'; // Print ‘*’ instead of ‘$’ for each empty position in the stack
+		this.acStack[this.iTop--] = '*'; // Leave prev. value undefined
 		return cBlock;
 	}
 
 	/**
-	 * Standard check operation
+	 * The method to get iTop is to called getITop();
 	 * 
-	 * @return true if stack is empty
-	 */
-	public boolean isEmpty() {
-
-		return (this.iTop == -1);
-	}
-
-	/**
-	 * getter method to fectch variable iSize
 	 * 
-	 * @return true if stack is empty
-	 */
-	public int getISize() {
-
-		return iSize;
-	}
-
-	/**
-	 * getter method to fectch variable iTop
-	 * 
-	 * @return true if stack is empty
 	 */
 	public int getITop() {
-
 		return iTop;
+
 	}
 
 	/**
-	 * getter method to fectch the stack access counter
+	 * The method to get iSize is called getISize();
 	 * 
-	 * @return true if stack is empty
+	 * 
+	 */
+	public int getISize() {
+		return iSize;
+
+	}
+
+	/**
+	 * The method to get iSize is called getISize();
+	 * 
+	 * 
 	 */
 	public int getAccessCounter() {
+		return stackCounter;
 
-		return counter;
+	}
+
+	/**
+	 * 
+	 * 
+	 * @return return true if the stack is emp
+	 */
+	public boolean isEmpty() {
+		return (this.iTop == -1);
 	}
 
 }

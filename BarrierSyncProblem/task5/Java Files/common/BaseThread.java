@@ -1,6 +1,4 @@
-package task2.common;
-
-import java.util.Random;
+package common;
 
 /**
  * Class BaseThread Simply one customized base class for many of our own
@@ -30,6 +28,11 @@ public class BaseThread extends Thread {
 	protected int iTID;
 
 	/**
+	 * Our Thread counter.
+	 */
+	protected int iCounter = 0;;
+
+	/**
 	 * TID of a thread to proceed to the phase II.
 	 */
 	private static int siTurn = 1;
@@ -49,7 +52,8 @@ public class BaseThread extends Thread {
 	 * Assigns name to the thread and places it to the specified group.
 	 *
 	 * @param poGroup  ThreadGroup to add this thread to
-	 * @param pstrName A string indicating human-readable thread's name
+	 * @param pstrName A string indicating human-readable thread's name wtf u
+	 *                 talking about
 	 */
 	public BaseThread(ThreadGroup poGroup, String pstrName) {
 		super(poGroup, pstrName);
@@ -77,6 +81,7 @@ public class BaseThread extends Thread {
 	 */
 	private final void setTID() {
 		this.iTID = siNextTID++;
+
 	}
 
 	/**
@@ -108,6 +113,7 @@ public class BaseThread extends Thread {
 	 * as it touches siTurn and siNextTID.
 	 */
 	protected synchronized void phase2() {
+
 		System.out.println(this.getClass().getName() + " thread [TID=" + this.iTID + "] starts PHASE II.");
 
 		System.out.println("Some stats info in the PHASE II:\n" + "    iTID = " + this.iTID + ", siNextTID = "
