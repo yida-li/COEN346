@@ -1,5 +1,6 @@
-//    7*8
-
+//
+// Owner of the Simp Process Class API
+//
 public class Process extends Thread {
 
 	int ProcessID; // to identify the process number
@@ -9,14 +10,6 @@ public class Process extends Thread {
 	String status; // started/resumed/paused
 	private final Object lock = new Object();
 	private boolean paused = false; // when process is initialized, lock it for the first instance
-
-	// listening to every single key of your piano
-	// smelling the absense of your keychain
-	// escaping the loneliness with my keyboard
-	// running
-	// reawakening my heart to unlock your keychain
-	//
-	// your mother and I miss you so much linda
 
 	@Override
 	public void run() {
@@ -41,24 +34,20 @@ public class Process extends Thread {
 	public void awakenThread() {
 		paused = true;
 		synchronized (lock) {
-			lock.notify(); // call notify to break the wait, so the thread continues to run
+			lock.notify();
 		}
 	}
 
 	public Process(int id, int arrival, int duration) {
-
 		this.ProcessID = id;
 		this.Arrival = arrival;
 		this.Burst = duration;
-
 		this.Wait = 0;
-
 		if (this.Arrival == 1) {
 			this.status = "ready";
 		} else {
 			this.status = "waiting";
 		}
-
 	}
 
 	public int getArrivalTime() {
@@ -78,3 +67,13 @@ public class Process extends Thread {
 	}
 
 }
+
+// listening to every single key of your piano
+// smelling the absense of your keychain
+// escaping the loneliness with my keyboard
+// running across every keystone
+//
+// reading my keystrokes something something reawakening my heart to unlock your
+// keychain
+// your mother and I miss you so much linda
+// i miss you little monkey

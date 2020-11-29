@@ -1,7 +1,6 @@
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayDeque;
-
 import java.util.Queue;
 
 public class Scheduler extends Thread {
@@ -68,15 +67,24 @@ public class Scheduler extends Thread {
 		}
 	}
 
+	// the bread and butter of the code
 	// select the thread with the lowest burst time and switch it to the front of
 	// queue
 	public void selectThread() {
 		if (processQueue.size() >= 2) {
+
+			// Retrieves, but does not remove, the head of this queue, or returns null if
+			// this queue is empty.
 			Process first = processQueue.peek();
 
 			for (int i = 0; i < processQueue.size() + 1; i++) {
 
 				Process temp = processQueue.remove();
+
+				///
+				// Changing my fairness here
+
+				///
 
 				if ((temp.Burst == first.Burst) && (temp.Wait > first.Wait)) {
 					// give priority to older process , more waiting time
@@ -165,7 +173,6 @@ public class Scheduler extends Thread {
 	public double tD(double x) {
 		Double truncatedDouble = BigDecimal.valueOf(x).setScale(3, RoundingMode.HALF_UP).doubleValue();
 		return truncatedDouble;
-
 	}
 
 	public String returnString() throws InterruptedException {
