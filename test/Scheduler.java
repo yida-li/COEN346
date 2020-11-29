@@ -1,6 +1,7 @@
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayDeque;
+import java.util.Random;
 import java.util.Queue;
 
 public class Scheduler extends Thread {
@@ -41,7 +42,7 @@ public class Scheduler extends Thread {
 		for (int i = 0; i < waitingQueue.size(); i++) {
 
 			Process temp = waitingQueue.remove();
-			if (temp.Arrival <= quantumTime) {
+			if (temp.arrivalTime <= quantumTime) {
 				temp.status = "ready";
 				processQueue.add(temp);
 			} else
@@ -54,60 +55,77 @@ public class Scheduler extends Thread {
 		for (int i = 0; i < waitingQueue.size(); i++) {
 			Process temp = waitingQueue.remove();
 			if (temp.status == "waiting" || temp.status == "paused") {
-				temp.Wait += x;
+				temp.waitingTime += x;
 			}
 			waitingQueue.add(temp);
 		}
 		for (int i = 0; i < processQueue.size(); i++) {
 			Process temp = processQueue.remove();
 			if (temp.status == "waiting" || temp.status == "paused") {
-				temp.Wait += x;
+				temp.waitingTime += x;
 			}
 			processQueue.add(temp);
 		}
 	}
 
-	// the bread and butter of the code
 	// select the thread with the lowest burst time and switch it to the front of
 	// queue
 	public void selectThread() {
 		if (processQueue.size() >= 2) {
-
-			// Retrieves, but does not remove, the head of this queue, or returns null if
-			// this queue is empty.
 			Process first = processQueue.peek();
 
 			for (int i = 0; i < processQueue.size() + 1; i++) {
 
 				Process temp = processQueue.remove();
 
-				///
-				// Changing my fairness here
-
-				///
-
-				if ((temp.Burst == first.Burst) && (temp.Wait > first.Wait)) {
+				if ((temp.burstTime == first.burstTime) && (temp.waitingTime > first.waitingTime)) {
 					// give priority to older process , more waiting time
 					processQueue.add(first);
 					first = temp;
 
-				} else if (temp.Burst < first.Burst) {
+				} else if (temp.burstTime < first.burstTime) {
 					// if the 2 process have same burst time,
 					processQueue.add(first);
 					first = temp;
 
-				} else if (temp.Burst > first.Burst) {
+				} else if (temp.burstTime > first.burstTime) {
 					processQueue.add(temp);
 				} else {
 
 				}
 			}
-			processQueue.add(first);
-			for (int i = 0; i < processQueue.size() - 1; i++) {
-				Process temp = processQueue.remove();
-				processQueue.add(temp);
+
+			// fairness implementation
+
+			int random = getRandomNumberInRange(1, 3);
+			if (random == 3) {
+				for (int i = 0; i < processQueue.size() - 1; i++) {
+					Process temp = processQueue.remove();
+					processQueue.add(temp);
+				}
+				processQueue.add(first);
+			}
+
+			else {
+				processQueue.add(first);
+				for (int i = 0; i < processQueue.size() - 1; i++) {
+					Process temp = processQueue.remove();
+					processQueue.add(temp);
+				}
+
 			}
 		}
+
+	}
+
+	private static int getRandomNumberInRange(int min, int max) {
+
+		if (min >= max) {
+			throw new IllegalArgumentException("max must be greater than min");
+		}
+
+		Random r = new Random();
+		return r.nextInt((max - min) + 1) + min;
 	}
 
 	// the main method that runs the process, increments wait time, record log,
@@ -124,38 +142,39 @@ public class Scheduler extends Thread {
 
 		if (temp.status == "ready") {
 			temp.status = "started";
-			log += ("Time :" + tD(quantumTime) + ", Process " + temp.ProcessID + " Process Status :" + temp.status
+			log += ("Time :" + tD(quantumTime) + ", Process " + temp.processNumber + " Process Status :" + temp.status
 					+ "\n");
 
 		}
 
 		if (temp.status == "started" || temp.status == "paused") {
 			temp.status = "resumed";
-			log += ("Time :" + tD(quantumTime) + ", Process " + temp.ProcessID + " Process Status :" + temp.status
+			log += ("Time :" + tD(quantumTime) + ", Process " + temp.processNumber + " Process Status :" + temp.status
 					+ "\n");
 
 		}
 
 		// increase the schedule time based on the quantum burst time
-		IncreaseQuantumClock(getQuantumTime(temp.Burst));
+		IncreaseQuantumClock(getQuantumTime(temp.burstTime));
 		// increment waiting time for processes inside waiting queue
-		incrementWaitingTime(getQuantumTime(temp.Burst));
+		incrementWaitingTime(getQuantumTime(temp.burstTime));
 		// decrease process burst time
-		temp.Burst -= getQuantumTime(temp.Burst);
+		temp.burstTime -= getQuantumTime(temp.burstTime);
 
 		if (temp.status == "resumed") {
 			temp.status = "paused";
-			log += ("Time :" + tD(quantumTime) + ", Process " + temp.ProcessID + " Process Status :" + temp.status
+			log += ("Time :" + tD(quantumTime) + ", Process " + temp.processNumber + " Process Status :" + temp.status
 					+ "\n");
 		}
 
 		// check if waiting list element is ready
 		checkWaitingQueue();
 
-		// if Burst is too low, set finish
-		if (temp.Burst <= 0.1) {
-			log += ("Time :" + tD(quantumTime) + ", Process" + temp.ProcessID + " Process Status : Finished" + "\n");
-			waitingTimelog += ("Process " + temp.ProcessID + " waiting time :" + tD(temp.Wait) + "\n");
+		// if burstTime is too low, set finish
+		if (temp.burstTime <= 0.1) {
+			log += ("Time :" + tD(quantumTime) + ", Process" + temp.processNumber + " Process Status : Finished"
+					+ "\n");
+			waitingTimelog += ("Process " + temp.processNumber + " waiting time :" + tD(temp.waitingTime) + "\n");
 
 		}
 		// or else add process back to queue
@@ -173,6 +192,7 @@ public class Scheduler extends Thread {
 	public double tD(double x) {
 		Double truncatedDouble = BigDecimal.valueOf(x).setScale(3, RoundingMode.HALF_UP).doubleValue();
 		return truncatedDouble;
+
 	}
 
 	public String returnString() throws InterruptedException {
