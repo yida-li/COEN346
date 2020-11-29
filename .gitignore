@@ -15,6 +15,7 @@ bin/
 
 
 # just in case
+*.test
 *.iml
 *.ipr
 *.com
