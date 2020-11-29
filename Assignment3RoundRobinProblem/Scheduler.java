@@ -72,38 +72,41 @@ public class Scheduler extends Thread {
 	// queue
 	public void selectThread() {
 		if (processQueue.size() >= 2) {
+
+			// Shortest Time Remaining Algorithm Implementataion
 			Process first = processQueue.peek();
-
 			for (int i = 0; i < processQueue.size() + 1; i++) {
-
 				Process temp = processQueue.remove();
-
 				if ((temp.burstTime == first.burstTime) && (temp.waitingTime > first.waitingTime)) {
 					// give priority to older process , more waiting time
 					processQueue.add(first);
 					first = temp;
-
 				} else if (temp.burstTime < first.burstTime) {
-					// if the 2 process have same burst time,
 					processQueue.add(first);
 					first = temp;
-
 				} else if (temp.burstTime > first.burstTime) {
 					processQueue.add(temp);
-				} else {
-
 				}
 			}
 
-			// without fairness implementation
-			// process with low priority will never get to run until the process with short
-			// time remaining finishes its remaining duration.
-			processQueue.add(first);
-			for (int i = 0; i < processQueue.size() - 1; i++) {
-				Process temp = processQueue.remove();
-				processQueue.add(temp);
+			// Fairness Algorithm Implementation
+			// 33% of the times or rather logically speaking 1 in every 3 times, the
+			// schedule will put the process with the high priority last
+			// thus leaving the other process a chance to run a part of their long code
+			int random = getRandomNumberInRange(1, 3);
+			if (random == 3) {
+				for (int i = 0; i < processQueue.size() - 1; i++) {
+					Process temp = processQueue.remove();
+					processQueue.add(temp);
+				}
+				processQueue.add(first);
+			} else {
+				processQueue.add(first);
+				for (int i = 0; i < processQueue.size() - 1; i++) {
+					Process temp = processQueue.remove();
+					processQueue.add(temp);
+				}
 			}
-
 		}
 
 	}
